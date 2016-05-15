@@ -1,6 +1,7 @@
 #include <iostream>
 #include <regex>
 #include "Scanner.h"
+#include "Document.h"
 
 
 using namespace std;
@@ -13,23 +14,22 @@ int main() {
 //    Scanner scanner("~/Desktop/MarkTrans/README.md");
 //    scanner.getType();
 
-    std::regex r(TYPE_REGEX::TABLE);
-    std::smatch res;
-//    std::string s = "aaaabcb";
-//    std::cout << regex_search(s, res, r) << std::endl;
 
-    Scanner s("./README.md");
-    std::string str;
-    int count = 300;
-    while (count--) {
+//    Scanner s("./README.md");
+//    std::string str;
+//    int count = 300;
+//    while (count--) {
+//
+//        std::string& ss = s.getLine();
+////        if (regex_match(ss, r))
+//        if (regex_match(ss, TYPE_REGEX::HEADER))
+//            std::cout << (299 - count)<< "=->" << ss << std::endl;
+//        if (!s.consume())
+//            break;
+//    }
 
-        std::string& ss = s.getLine();
-        if (regex_match(ss, r))
-            std::cout << (299 - count)<< "=->" << ss << std::endl;
-        if (!s.consume())
-            break;
-    }
-
+    Document d("README.md");
+    d.writeToFile();
 
     std::cout << "=====end=====" << std::endl;
     return 0;

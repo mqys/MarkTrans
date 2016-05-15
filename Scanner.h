@@ -12,20 +12,27 @@
 
 class Scanner {
 public:
-    Scanner(std::string filename) : m_in(filename) {}
+    Scanner(std::string filename) : m_in(filename), m_isEnd(false){}
 
     std::string& getLine() {
         return m_line;
     }
     bool consume() {
-        return (bool)getline(m_in, m_line);
+        if (getline(m_in, m_line))
+            return true;
+        m_isEnd = true;
+        return false;
     }
-    TYPE getType();
+    bool isEnd() {
+        return  m_isEnd;
+    }
+    TYPE getOuterType();
+    TYPE getInnerType();
 
 private:
     std::ifstream m_in;
     std::string m_line;
-
+    bool m_isEnd;
 };
 
 

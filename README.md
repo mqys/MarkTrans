@@ -2,6 +2,10 @@
 
 repo for learning notes
 
+today is a good day!!!!
+今天是个好日子啊, 哈哈哈啊
+明天呢, 呼呼呼呼呼
+
 ## Computer Science  
 - [Algorithms](./algorithms.md) "Algorithms(4th)"
 - [CSAPP](./csapp.md) "Computer System: A programmer's Perspective"
@@ -34,8 +38,7 @@ hafuehfu <haufeh> afehuh
 > 这个还是引用
 
 ``` c++
-#include <haha>
-int mian()
+int main()
 {
     return 0;
 }
