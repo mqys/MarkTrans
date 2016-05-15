@@ -11,11 +11,11 @@ int main() {
 
     std::cout << "=====main=====" << std::endl;
 
-//    Scanner scanner("~/Desktop/MarkTrans/README.md");
+//    Scanner scanner("~/Desktop/MarkTrans/TEST.md");
 //    scanner.getType();
 
 
-//    Scanner s("./README.md");
+//    Scanner s("./TEST.md");
 //    std::string str;
 //    int count = 300;
 //    while (count--) {
@@ -28,7 +28,7 @@ int main() {
 //            break;
 //    }
 
-    Document d("README.md");
+    Document d("TEST.md");
     d.writeToFile();
 
     std::cout << "=====end=====" << std::endl;
