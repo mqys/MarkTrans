@@ -7,7 +7,7 @@
 using namespace std;
 
 
-int main() {
+int main(int argc, char** args) {
 
     std::cout << "=====main=====" << std::endl;
 
@@ -27,10 +27,14 @@ int main() {
 //        if (!s.consume())
 //            break;
 //    }
+//    std::string file;
+//    if (argc == 2)
+//        file = args[1];
+//    Document d(file);
+//    d.writeToFile();
 
     Document d("TEST.md");
     d.writeToFile();
-
     std::cout << "=====end=====" << std::endl;
     return 0;
 }

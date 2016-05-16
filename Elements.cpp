@@ -1,3 +1,4 @@
+
 //
 // Created by pengnan on 16/5/13.
 //
@@ -5,6 +6,11 @@
 
 #include "Scanner.h"
 #include "Elements.h"
+
+
+TYPE Element::getType() {
+    return TYPE::TEXT;
+}
 
 Header::Header(Scanner &scan, std::ostream &out): Element(scan, out), m_level(0) {
     auto& s = m_scan.getLine();
@@ -42,6 +48,7 @@ Code::Code(Scanner &scan, std::ostream &out) : Element(scan, out){
     scan.consume();
 }
 void Code::write() {
+    // TODO: need to transfer symbols
     m_out << "<pre><code>\n";
     m_out << m_code;
     m_out << "</code></pre>\n";
@@ -139,14 +146,14 @@ void Outer_image::write() {
 }
 
 void Text::write() {
-    // TODO: add some symbol trans
+    // TODO: add element trans, rich text
     m_out << m_text;
 }
 
 
 Paragraph::Paragraph(Scanner &scan, std::ostream &out) : Element(scan, out) {
     while (!m_scan.isEnd() && m_scan.getOuterType() == TYPE::TEXT) {
-        m_arr.push_back(std::make_shared<Text>(m_scan.getLine(), m_scan, m_out));
+        m_arr.push_back(std::make_shared<Text>(m_scan, m_out, m_scan.getLine()));
         m_scan.consume();
     }
 }
@@ -158,4 +165,89 @@ void Paragraph::write() {
         m_out << std::endl;
     }
     m_out << "</p>";
+}
+
+Unordered_list::Unordered_list(Scanner& scan, std::ostream& out, int indent) : Element(scan, out) {
+    while (!m_scan.isEnd() && (m_scan.getOuterType() == TYPE::UNORDERED_LIST || m_scan.getOuterType() == TYPE::ORDERED_LIST)) {
+
+        auto& str = m_scan.getLine();
+        int thisIndent = 0;
+        while(thisIndent < str.size() && (str[thisIndent] == ' ' || str[thisIndent] == '\t'))
+            ++thisIndent;
+        m_indent = thisIndent;
+
+        // go back, this object remain empty in the child list
+        if (m_indent < indent)
+            return;
+        // find child list
+        if (m_indent > indent) {
+            // unordered child list
+            if (m_scan.getOuterType() == TYPE::UNORDERED_LIST)
+                m_list.push_back(std::make_shared<Unordered_list>(m_scan, m_out, m_indent));
+            else // ordered child list
+                m_list.push_back(std::make_shared<Ordered_list>(m_scan, m_out, m_indent));
+
+            continue;
+        }
+
+        m_list.push_back(std::make_shared<Text>(m_scan, m_out, str.substr(m_indent+2, str.size()-m_indent-2)));
+        m_scan.consume();
+    }
+}
+void Unordered_list::write() {
+    m_out << "<p><ul>";
+    for (auto& i : m_list) {
+        if (i->getType() == TYPE::TEXT)
+            m_out << "<li>";
+        i->write();
+        if (i->getType() == TYPE::TEXT)
+            m_out << "</li>";
+    }
+    m_out << "</ul></p>";
+}
+TYPE Unordered_list::getType() {
+    return TYPE::UNORDERED_LIST;
+}
+
+
+Ordered_list::Ordered_list(Scanner& scan, std::ostream& out, int indent) : Element(scan, out) {
+    while (!m_scan.isEnd() && (m_scan.getOuterType() == TYPE::UNORDERED_LIST || m_scan.getOuterType() == TYPE::ORDERED_LIST)) {
+
+        auto& str = m_scan.getLine();
+        int thisIndent = 0;
+        while(thisIndent < str.size() && (str[thisIndent] == ' ' || str[thisIndent] == '\t'))
+            ++thisIndent;
+        m_indent = thisIndent;
+
+        // go back, this object remain empty in the child list
+        if (m_indent < indent)
+            return;
+        // find child list
+        if (m_indent > indent) {
+            // unordered child list
+            if (m_scan.getOuterType() == TYPE::UNORDERED_LIST)
+                m_list.push_back(std::make_shared<Unordered_list>(m_scan, m_out, m_indent));
+            else // ordered child list
+                m_list.push_back(std::make_shared<Ordered_list>(m_scan, m_out, m_indent));
+
+            continue;
+        }
+
+        m_list.push_back(std::make_shared<Text>(m_scan, m_out, str.substr(m_indent+2, str.size()-m_indent-2)));
+        m_scan.consume();
+    }
+}
+void Ordered_list::write() {
+    m_out << "<p><ol>";
+    for (auto& i : m_list) {
+        if (i->getType() == TYPE::TEXT)
+            m_out << "<li>";
+        i->write();
+        if (i->getType() == TYPE::TEXT)
+            m_out << "</li>";
+    }
+    m_out << "</ol></p>";
+}
+TYPE Ordered_list::getType() {
+    return TYPE::ORDERED_LIST;
 }

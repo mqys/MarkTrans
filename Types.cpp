@@ -16,7 +16,7 @@ const std::regex TYPE_REGEX::CODE("`{3}.*");
 const std::regex TYPE_REGEX::TABLE("(\\|.+)+\\|");
 
 const std::regex TYPE_REGEX::LINK("[^!]*\\[.+]\\(.+)");
-const std::regex TYPE_REGEX::BARE_LINK(".*<.+>.*");
+const std::regex TYPE_REGEX::BARE_LINK("^\\s*<.+>\\s*$");
 const std::regex TYPE_REGEX::IMAGE(".*!\\[.+]\\(.+)");
 const std::regex TYPE_REGEX::TEXT(".+");
 

@@ -63,8 +63,12 @@ void Document::trans() {
                 m_list.push_back(std::make_shared<Outer_barelink>(m_scan, m_out));
                 break;
 
-//            case TYPE::UNORDERED_LIST:break;
-//            case TYPE::ORDERED_LIST:break;
+            case TYPE::UNORDERED_LIST:
+                m_list.push_back(std::make_shared<Unordered_list>(m_scan, m_out));
+                break;
+            case TYPE::ORDERED_LIST:
+                m_list.push_back(std::make_shared<Ordered_list>(m_scan, m_out));
+                break;
 
             case TYPE::TEXT:
                 m_list.push_back(std::make_shared<Paragraph>(m_scan, m_out));

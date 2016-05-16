@@ -21,6 +21,7 @@ public:
 
 //    virtual void trans() = 0;
     virtual void write() = 0;
+    virtual TYPE getType();
 protected:
     Scanner& m_scan;
     std::ostream& m_out;
@@ -105,8 +106,11 @@ private:
 
 class Text : public Element {
 public:
-    Text(std::string text, Scanner& scan, std::ostream& out) : Element(scan, out), m_text(text) {}
+    Text(Scanner& scan, std::ostream& out, std::string text = "") : Element(scan, out), m_text(text) {}
     virtual void write() override;
+    void setText(std::string str) {
+        m_text = str;
+    }
 
 private:
     std::string m_text;
@@ -122,11 +126,23 @@ private:
 };
 
 
+class Unordered_list : public Element {
+public:
+    Unordered_list(Scanner& scan, std::ostream& out, int indent = 0);
+    virtual void write() override;
+    virtual TYPE getType() override;
+private:
+    std::vector<std::shared_ptr<Element>> m_list;
+    int m_indent;
+};
 
-//class Unordered_list : public Element {
-//public:
-//    Unordered_list(Scanner& scan, std::ostream& out);
-//
-//};
-
+class Ordered_list : public Element {
+public:
+    Ordered_list(Scanner& scan, std::ostream& out, int indent = 0);
+    virtual void write() override;
+    virtual TYPE getType() override;
+private:
+    std::vector<std::shared_ptr<Element>> m_list;
+    int m_indent;
+};
 #endif //MARKTRANS_ELEMENT_H
