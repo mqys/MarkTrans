@@ -27,12 +27,16 @@ public:
         return  m_isEnd;
     }
     TYPE getOuterType();
-    TYPE getInnerType();
+    bool getInnerType(const std::string::const_iterator& begin, const std::string::const_iterator& end, const std::regex& reg);
+    long getMatchedLength() {
+        return m_matchRes.length();
+    }
 
 private:
     std::ifstream m_in;
     std::string m_line;
     bool m_isEnd;
+    std::smatch m_matchRes;
 };
 
 

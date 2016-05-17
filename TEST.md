@@ -6,9 +6,12 @@ today is a good day!!!!
 今天是个好日子啊, 哈哈哈啊
 明天呢, 呼呼呼呼呼
 
+测试富文本中的字符(小括号), [中括号], <小于号, >大于号, “引号,  ‘单引号
+aheufeuh <jfiaefiah>  <hahaha, haha> <哈哈>
+
 ## Computer Science  
-- [Algorithms](./algorithms.md) "Algorithms(4th)"
-- [CSAPP](./csapp.md) "Computer System: A programmer's Perspective"
+- [Algorithms](./algorithms.md) "Algorithms(4th)" **emphasis**, hello
+- [CSAPP](./csapp.md) "Computer System: A programmer's Perspective" using`c++` haha
     - [TCP/IP](./tcpip.md) " 哈哈哈, 今天好凉爽: The Protocols"
     - [design patterns](./designPattern.md) notes on design patterns
 
@@ -45,8 +48,17 @@ hafuehfu <kkkkkk> afehuh
 > 这个还是引用
 
 ``` c++
+#include <iostream>
+#include “main.h”
 int main()
 {
+    int a = 0;
+    const char* str = “haha”;
+    int b = 1 > 100 ? 99 : 98;
+    if (b || 99)
+  	b = 1000;
+    if (a && 1)
+	a = 99;
     return 0;
 }
 ```

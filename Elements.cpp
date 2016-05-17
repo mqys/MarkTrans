@@ -11,11 +11,49 @@
 TYPE Element::getType() {
     return TYPE::TEXT;
 }
+std::string transLink(const std::string::const_iterator& begin, const std::string::const_iterator& end) {
+    std::string tmp(begin, end);
+    auto nl = tmp.find('[');
+    auto nr = tmp.find(']');
+    auto name = tmp.substr(nl+1, nr-nl-1);
+    auto al = tmp.find('(');
+    auto ar = tmp.find(')');
+    auto addr = tmp.substr(al+1, ar-al-1);
+    // TODO: trans link addr: relative path or header inside
+
+    std::string res = "<a href='" + addr + "'>" + name + "</a>";
+    return res;
+}
+
+RichText::RichText(Scanner& scan, std::ostream& out, std::string text) : Element(scan, out) {
+    // TODO: transfer
+    // deal with: emphasis, link, image, code, char entity
+    std::string res;
+    auto end = text.cend();
+    for (auto it = text.cbegin(); it != end;) {
+        // test link
+        if (*it == '[' && m_scan.getInnerType(it, end, TYPE_REGEX::LINK)) {
+            res += transLink(it, end);
+            it += m_scan.getMatchedLength();
+            continue;
+        }
+        // test barelink
+        // test image
+        // test emphasis
+        // test code
+        // test entity
+        res.push_back(*it++);
+    }
+    m_text = res;
+}
+void RichText::write() {
+    m_out << m_text;
+}
 
 Header::Header(Scanner &scan, std::ostream &out): Element(scan, out), m_level(0) {
     auto& s = m_scan.getLine();
-    int i;
-    for (i = 0; i < s.size() && s[i] == '#'; ++i, ++m_level);
+    int i = 0;
+    for (; i < s.size() && s[i] == '#'; ++i, ++m_level);
     m_headerName = s.substr(i + 1);
     m_scan.consume();
 }
@@ -23,7 +61,7 @@ Header::Header(Scanner &scan, std::ostream &out): Element(scan, out), m_level(0)
 void Header::write() {
     m_out << "<h" << m_level;
     m_out << '>' << m_headerName;
-    m_out << "</h" << m_level << '>';
+    m_out << "</h" << m_level << ">\n";
 }
 
 
@@ -35,21 +73,47 @@ Blockquote::Blockquote(Scanner &scan, std::ostream &out) : Element(scan, out){
 
 }
 void Blockquote::write() {
-    m_out << "<blockquote><p>" << m_quote << "</p></blockquote>";
+    m_out << "<blockquote style=\"background-color: #f7f5d4\"><p>" << m_quote << "</p></blockquote>\n";
 }
 
+static std::string transferStr(std::string& str) {
+    // transfer <(&lt), >(&gt)
+    int count = 0;
+    for (int i = 0; i < str.size(); ++i) {
+        if (str[i] == '<' || str[i] == '>')
+            ++count;
+    }
+    std::string res;
+    if (count == 0) {
+        res = str + '\n';
+        return res;
+    }
 
+    res.resize(str.size()+count*2+1);
+    int j = 0;
+    for (int i = 0; i < str.size(); ++i) {
+        if (str[i] == '<') {
+            res[j++] = '&';res[j++] = 'l';res[j++] = 't';
+        } else if (str[i] == '>') {
+            res[j++] = '&';res[j++] = 'g';res[j++] = 't';
+        } else {
+            res[j++] = str[i];
+        }
+    }
+    res[j] = '\n';
+    return res;
+}
 Code::Code(Scanner &scan, std::ostream &out) : Element(scan, out){
     m_scan.consume();
     while (!m_scan.isEnd() &&  m_scan.getOuterType() != TYPE::CODE) {
-        m_code += m_scan.getLine() + '\n';
+//        m_code += m_scan.getLine() + '\n';
+        m_code += transferStr(m_scan.getLine());
         m_scan.consume();
     }
     scan.consume();
 }
 void Code::write() {
-    // TODO: need to transfer symbols
-    m_out << "<pre><code>\n";
+    m_out << "<pre style=\"background-color: #f0f0f0\"><code>\n";
     m_out << m_code;
     m_out << "</code></pre>\n";
 }
@@ -102,58 +166,52 @@ void Table::write() {
 }
 
 
-Outer_link::Outer_link(Scanner &scan, std::ostream &out) : Element(scan, out){
-    auto& s = m_scan.getLine();
-    auto nl = s.find('[');
-    auto nr = s.find(']');
-    m_name = s.substr(nl+1, nr-nl-1);
-    auto al = s.find('(');
-    auto ar = s.find(')');
-    m_addr = s.substr(al+1, ar-al-1);
-    m_scan.consume();
-}
-
-void Outer_link::write() {
-    m_out << "<p><a href='" << m_addr << "'>";
-    m_out << m_name << "</a></p>";
-}
-
-Outer_barelink::Outer_barelink(Scanner &scan, std::ostream &out) : Element(scan, out){
-    auto& s = m_scan.getLine();
-    m_link = s.substr(1, s.size()-2);
-    m_scan.consume();
-}
-void Outer_barelink::write() {
-    m_out << "<p><a href='" << m_link << "'>";
-    m_out << m_link << "</a></p>";
-}
-
-
-Outer_image::Outer_image(Scanner &scan, std::ostream &out) : Element(scan, out) {
-    auto& s = m_scan.getLine();
-    auto nl = s.find('[');
-    auto nr = s.find(']');
-    m_name = s.substr(nl+1, nr-nl-1);
-    auto al = s.find('(');
-    auto ar = s.find(')');
-    m_addr = s.substr(al+1, ar-al-1);
-    m_scan.consume();
-}
-
-void Outer_image::write() {
-    m_out << "<p><img src='" << m_addr << "' alt='";
-    m_out << m_name << "' /></p>";
-}
-
-void Text::write() {
-    // TODO: add element trans, rich text
-    m_out << m_text;
-}
-
+//Outer_link::Outer_link(Scanner &scan, std::ostream &out) : Element(scan, out){
+//    auto& s = m_scan.getLine();
+//    auto nl = s.find('[');
+//    auto nr = s.find(']');
+//    m_name = s.substr(nl+1, nr-nl-1);
+//    auto al = s.find('(');
+//    auto ar = s.find(')');
+//    m_addr = s.substr(al+1, ar-al-1);
+//    m_scan.consume();
+//}
+//
+//void Outer_link::write() {
+//    m_out << "<p><a href='" << m_addr << "'>";
+//    m_out << m_name << "</a></p>";
+//}
+//
+//Outer_barelink::Outer_barelink(Scanner &scan, std::ostream &out) : Element(scan, out){
+//    auto& s = m_scan.getLine();
+//    m_link = s.substr(1, s.size()-2);
+//    m_scan.consume();
+//}
+//void Outer_barelink::write() {
+//    m_out << "<p><a href='" << m_link << "'>";
+//    m_out << m_link << "</a></p>";
+//}
+//
+//
+//Outer_image::Outer_image(Scanner &scan, std::ostream &out) : Element(scan, out) {
+//    auto& s = m_scan.getLine();
+//    auto nl = s.find('[');
+//    auto nr = s.find(']');
+//    m_name = s.substr(nl+1, nr-nl-1);
+//    auto al = s.find('(');
+//    auto ar = s.find(')');
+//    m_addr = s.substr(al+1, ar-al-1);
+//    m_scan.consume();
+//}
+//
+//void Outer_image::write() {
+//    m_out << "<p><img src='" << m_addr << "' alt='";
+//    m_out << m_name << "' /></p>";
+//}
 
 Paragraph::Paragraph(Scanner &scan, std::ostream &out) : Element(scan, out) {
     while (!m_scan.isEnd() && m_scan.getOuterType() == TYPE::TEXT) {
-        m_arr.push_back(std::make_shared<Text>(m_scan, m_out, m_scan.getLine()));
+        m_arr.push_back(std::make_shared<RichText>(m_scan, m_out, m_scan.getLine()));
         m_scan.consume();
     }
 }
@@ -164,7 +222,7 @@ void Paragraph::write() {
         t->write();
         m_out << std::endl;
     }
-    m_out << "</p>";
+    m_out << "</p>\n";
 }
 
 Unordered_list::Unordered_list(Scanner& scan, std::ostream& out, int indent) : Element(scan, out) {
@@ -190,7 +248,7 @@ Unordered_list::Unordered_list(Scanner& scan, std::ostream& out, int indent) : E
             continue;
         }
 
-        m_list.push_back(std::make_shared<Text>(m_scan, m_out, str.substr(m_indent+2, str.size()-m_indent-2)));
+        m_list.push_back(std::make_shared<RichText>(m_scan, m_out, str.substr(m_indent+2, str.size()-m_indent-2)));
         m_scan.consume();
     }
 }
@@ -203,7 +261,7 @@ void Unordered_list::write() {
         if (i->getType() == TYPE::TEXT)
             m_out << "</li>";
     }
-    m_out << "</ul></p>";
+    m_out << "</ul></p>\n";
 }
 TYPE Unordered_list::getType() {
     return TYPE::UNORDERED_LIST;
@@ -233,7 +291,7 @@ Ordered_list::Ordered_list(Scanner& scan, std::ostream& out, int indent) : Eleme
             continue;
         }
 
-        m_list.push_back(std::make_shared<Text>(m_scan, m_out, str.substr(m_indent+2, str.size()-m_indent-2)));
+        m_list.push_back(std::make_shared<RichText>(m_scan, m_out, str.substr(m_indent+2, str.size()-m_indent-2)));
         m_scan.consume();
     }
 }
@@ -246,7 +304,7 @@ void Ordered_list::write() {
         if (i->getType() == TYPE::TEXT)
             m_out << "</li>";
     }
-    m_out << "</ol></p>";
+    m_out << "</ol></p>\n";
 }
 TYPE Ordered_list::getType() {
     return TYPE::ORDERED_LIST;

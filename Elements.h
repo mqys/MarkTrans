@@ -27,6 +27,21 @@ protected:
     std::ostream& m_out;
 };
 
+
+// rich text, can contain Links, Emphasis, Code, Image...
+class RichText : public Element {
+public:
+    RichText(Scanner& scan, std::ostream& out, std::string text = "");
+    virtual void write() override;
+    void setText(std::string str) {
+        m_text = str;
+    }
+
+private:
+    std::string m_text;
+};
+
+// Outer elements
 class Header: public Element {
 public:
     Header(Scanner& scan, std::ostream& out);
@@ -44,7 +59,7 @@ public:
     }
 
     virtual void write() override {
-        m_out << "<hr />";
+        m_out << "<hr />\n";
     }
 };
 
@@ -75,46 +90,34 @@ private:
     std::vector<std::vector<std::string>> m_rows;
 };
 
-class Outer_link : public Element {
-public:
-    Outer_link(Scanner& scan, std::ostream& out);
-    virtual void write() override;
-
-private:
-    std::string m_name;
-    std::string m_addr;
-};
-
-class Outer_barelink : public Element {
-public:
-    Outer_barelink(Scanner& scan, std::ostream& out);
-    virtual void write() override;
-
-private:
-    std::string m_link;
-};
-
-class Outer_image : public Element {
-public:
-    Outer_image(Scanner& scan, std::ostream& out);
-    virtual void write() override;
-
-private:
-    std::string m_name;
-    std::string m_addr;
-};
-
-class Text : public Element {
-public:
-    Text(Scanner& scan, std::ostream& out, std::string text = "") : Element(scan, out), m_text(text) {}
-    virtual void write() override;
-    void setText(std::string str) {
-        m_text = str;
-    }
-
-private:
-    std::string m_text;
-};
+//class Outer_link : public Element {
+//public:
+//    Outer_link(Scanner& scan, std::ostream& out);
+//    virtual void write() override;
+//
+//private:
+//    std::string m_name;
+//    std::string m_addr;
+//};
+//
+//class Outer_barelink : public Element {
+//public:
+//    Outer_barelink(Scanner& scan, std::ostream& out);
+//    virtual void write() override;
+//
+//private:
+//    std::string m_link;
+//};
+//
+//class Outer_image : public Element {
+//public:
+//    Outer_image(Scanner& scan, std::ostream& out);
+//    virtual void write() override;
+//
+//private:
+//    std::string m_name;
+//    std::string m_addr;
+//};
 
 class Paragraph : public Element {
 public:
@@ -122,7 +125,7 @@ public:
     virtual void write() override;
 
 private:
-    std::vector<std::shared_ptr<Text>> m_arr;
+    std::vector<std::shared_ptr<RichText>> m_arr;
 };
 
 

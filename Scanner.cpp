@@ -25,25 +25,20 @@ TYPE Scanner::getOuterType() {
         return TYPE::TABLE;
     else if (std::regex_match(m_line, TYPE_REGEX::CODE))
         return TYPE::CODE;
-    // match inner type
-    else if (std::regex_match(m_line, TYPE_REGEX::LINK))
-        return TYPE::LINK;
-    else if (std::regex_match(m_line, TYPE_REGEX::BARE_LINK))
-        return TYPE::BARE_LINK;
-    else if (std::regex_match(m_line, TYPE_REGEX::IMAGE))
-        return TYPE::IMAGE;
+
+        // match inner type, no need, just return TEXT
+//    else if (std::regex_match(m_line, TYPE_REGEX::LINK))
+//        return TYPE::LINK;
+//    else if (std::regex_match(m_line, TYPE_REGEX::BARE_LINK))
+//        return TYPE::BARE_LINK;
+//    else if (std::regex_match(m_line, TYPE_REGEX::IMAGE))
+//        return TYPE::IMAGE;
 
     return TYPE::TEXT;
 }
 
-TYPE Scanner::getInnerType() {
+bool Scanner::getInnerType(const std::string::const_iterator& begin, const std::string::const_iterator& end, const std::regex& reg) {
 
-    if (std::regex_match(m_line, TYPE_REGEX::LINK))
-        return TYPE::LINK;
-    else if (std::regex_match(m_line, TYPE_REGEX::BARE_LINK))
-        return TYPE::BARE_LINK;
-    else if (std::regex_match(m_line, TYPE_REGEX::IMAGE))
-        return TYPE::IMAGE;
+    return std::regex_search(begin, end, m_matchRes, reg);
 
-    return TYPE::TEXT;
 }

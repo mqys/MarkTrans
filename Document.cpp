@@ -4,9 +4,9 @@
 
 #include "Document.h"
 
-const std::string Document::HTML_START = "<html><head><meta charset=\"UTF-8\"><title>";
-const std::string Document::HTML_TITLE = "</title></head><body>";
-const std::string Document::HTML_END = "</body></html>";
+const std::string Document::HTML_START = "<html>\n<head><meta charset=\"UTF-8\"><title>";
+const std::string Document::HTML_TITLE = "</title></head>\n<body>";
+const std::string Document::HTML_END = "\n</body></html>";
 const std::string Document::HTML_AD = "<hr /><footer><p>Translated by MarkTrans (mqys)</p><p><a href=\"https://github.com/mqys\">mqys Github</a></p></footer>";
 
 Document::Document(std::string filename) : m_scan(filename), m_isTransed(false){
@@ -53,16 +53,6 @@ void Document::trans() {
             case TYPE::TABLE:
                 m_list.push_back(std::make_shared<Table>(m_scan, m_out));
                 break;
-            case TYPE::LINK:
-                m_list.push_back(std::make_shared<Outer_link>(m_scan, m_out));
-                break;
-            case TYPE::IMAGE:
-                m_list.push_back(std::make_shared<Outer_image>(m_scan, m_out));
-                break;
-            case TYPE::BARE_LINK:
-                m_list.push_back(std::make_shared<Outer_barelink>(m_scan, m_out));
-                break;
-
             case TYPE::UNORDERED_LIST:
                 m_list.push_back(std::make_shared<Unordered_list>(m_scan, m_out));
                 break;
@@ -70,14 +60,22 @@ void Document::trans() {
                 m_list.push_back(std::make_shared<Ordered_list>(m_scan, m_out));
                 break;
 
-            case TYPE::TEXT:
+             // inner type, should be included in the TEXT
+//            case TYPE::LINK:
+//                m_list.push_back(std::make_shared<Outer_link>(m_scan, m_out));
+//                break;
+//            case TYPE::IMAGE:
+//                m_list.push_back(std::make_shared<Outer_image>(m_scan, m_out));
+//                break;
+//            case TYPE::BARE_LINK:
+//                m_list.push_back(std::make_shared<Outer_barelink>(m_scan, m_out));
+//                break;
+
+//            case TYPE::TEXT:
+            default:
                 m_list.push_back(std::make_shared<Paragraph>(m_scan, m_out));
                 break;
-            default:
-                m_scan.consume();
-                break;
         }
-
     }
 
     m_isTransed = true;
