@@ -13,10 +13,11 @@ int main(int argc, char** args) {
 ////    std::string input = "- [Algorithms](./algorithms.md) \"Algorithms(4th)\"";
 ////    std::string input = "haha <kkkkkk> afehuh";
 ////    std::string input = "- ![haha](addr) aeahfuegau\"hhh\"";
-//    std::string input = "haha**jafieji** jfaihe";
+////    std::string input = "ha`java`ha**jafieji** jfaihe";
+//    std::string input = "haha <jfiaefiah>  <hahaha, haha> <哈哈>";
 //
 //    // if (std::regex_search(input, res, TYPE_REGEX::LINK)) {
-//    if (std::regex_search(input.cbegin()+5, input.cend(), res, TYPE_REGEX::EMPHASIS)) {
+//    if (std::regex_search(input.cbegin()+18, input.cend(), res, TYPE_REGEX::BARE_LINK)) {
 ////        auto it = res[0].first;
 ////        it += res.length();
 //        auto it = res[0].second;
@@ -56,6 +57,7 @@ int main(int argc, char** args) {
 
     Document d("TEST.md");
     d.writeToFile();
+
     std::cout << "=====end=====" << std::endl;
     return 0;
 }

@@ -2,15 +2,17 @@
 
 repo for learning notes
 
+hello mark
+
 today is a good day!!!!
 今天是个好日子啊, 哈哈哈啊
 明天呢, 呼呼呼呼呼
 
-测试富文本中的字符(小括号), [中括号], <小于号, >大于号, “引号,  ‘单引号
+测试富文本中的字符(小括号), [中括号], >大于号, <小于号, “引号,  ‘单引号
 aheufeuh <jfiaefiah>  <hahaha, haha> <哈哈>
 
 ## Computer Science  
-- [Algorithms](./algorithms.md) "Algorithms(4th)" **emphasis**, hello
+- [Algorithms](./algorithms.md) "Algorithms(4th)" **emphasis**, *hello*
 - [CSAPP](./csapp.md) "Computer System: A programmer's Perspective" using`c++` haha
     - [TCP/IP](./tcpip.md) " 哈哈哈, 今天好凉爽: The Protocols"
     - [design patterns](./designPattern.md) notes on design patterns
@@ -21,10 +23,6 @@ aheufeuh <jfiaefiah>  <hahaha, haha> <哈哈>
 	2. q38759
 - erquhuh
 - huhuhuhu呼呼呼
-
-### Compiler
-- [Language Implementation Patterns](./lanImpPat.md) "Language Implementation Patterns: Create your own Domain-specific and general programming languages"
-- [Compiler Construction Principles and Practice](./compiler.md) "Compiler Construction Principles and Practice"
 
 [这个是link](这个是link的address)
 

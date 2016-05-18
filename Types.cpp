@@ -20,5 +20,6 @@ const std::regex TYPE_REGEX::LINK("^\\[[^\\[\\]]+\\]\\([^\\(\\))]+\\)");
 const std::regex TYPE_REGEX::BARE_LINK("^<[^\\<\\>]+>");
 const std::regex TYPE_REGEX::IMAGE("^!\\[[^\\[\\]]+\\]\\([^\\(\\)\\)]+\\)");
 const std::regex TYPE_REGEX::EMPHASIS("^[_*]+[^_*]+[_*]+");
+const std::regex TYPE_REGEX::CODE_WORD("^`[^`]+`");
 
 //const std::regex TYPE_REGEX::PARAGRAPH;

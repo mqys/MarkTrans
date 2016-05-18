@@ -25,7 +25,8 @@ enum class TYPE {
     LINK,
     BARE_LINK,
     IMAGE,
-    EMPHASIS
+    EMPHASIS,
+    CODE_WORD
 };
 
 
@@ -48,6 +49,7 @@ public:
     static const std::regex BARE_LINK;
     static const std::regex IMAGE;
     static const std::regex EMPHASIS;
+    static const std::regex CODE_WORD;
 
 
 };

@@ -25,6 +25,44 @@ std::string transLink(const std::string::const_iterator& begin, const std::strin
     return res;
 }
 
+std::string transBarelink(const std::string::const_iterator& begin, const std::string::const_iterator& end) {
+    std::string tmp(begin+1, end-1);
+    auto res = "<a href='" + tmp + "'>" + tmp + "</a>";
+    return res;
+}
+
+std::string transImage(const std::string::const_iterator& begin, const std::string::const_iterator& end) {
+    std::string tmp(begin, end);
+    auto nl = tmp.find('[');
+    auto nr = tmp.find(']');
+    auto name = tmp.substr(nl+1, nr-nl-1);
+    auto al = tmp.find('(');
+    auto ar = tmp.find(')');
+    auto addr = tmp.substr(al+1, ar-al-1);
+
+    auto res = "<img src='" + addr + "' alt='" + name + "' />";
+    return res;
+}
+
+std::string transEmphasis(const std::string::const_iterator& begin, const std::string::const_iterator& end) {
+    int count = 0;
+    auto it = begin;
+    while ((it+count) != end && (*(it+count) == '*' || *(it+count) == '_'))
+        ++count;
+    std::string sym;
+    if (count == 1)
+        sym = "em";
+    else
+        sym = "strong";
+    std::string tmp(begin+count, end-count);
+
+    return '<' + sym + '>' + tmp + "</" + sym + '>';
+}
+
+std::string transCodeword(const std::string::const_iterator& begin, const std::string::const_iterator& end) {
+    std::string tmp(begin+1, end-1);
+    return "<code>" + tmp + "</code>";
+}
 RichText::RichText(Scanner& scan, std::ostream& out, std::string text) : Element(scan, out) {
     // TODO: transfer
     // deal with: emphasis, link, image, code, char entity
@@ -33,15 +71,55 @@ RichText::RichText(Scanner& scan, std::ostream& out, std::string text) : Element
     for (auto it = text.cbegin(); it != end;) {
         // test link
         if (*it == '[' && m_scan.getInnerType(it, end, TYPE_REGEX::LINK)) {
-            res += transLink(it, end);
-            it += m_scan.getMatchedLength();
+            auto len = m_scan.getMatchedLength();
+            auto matchEnd = it + len;
+            res += transLink(it, matchEnd);
+            it += len;
             continue;
         }
         // test barelink
+        if (*it == '<' && m_scan.getInnerType(it, end, TYPE_REGEX::BARE_LINK)) {
+            auto len = m_scan.getMatchedLength();
+            auto matchEnd = it + len;
+            res += transBarelink(it, matchEnd);
+            it += len;
+            continue;
+        }
         // test image
+        if (*it == '!' && m_scan.getInnerType(it, end, TYPE_REGEX::IMAGE)) {
+            auto len = m_scan.getMatchedLength();
+            auto matchEnd = it + len;
+            res += transImage(it, matchEnd);
+            it += len;
+            continue;
+        }
         // test emphasis
+        if ((*it == '*' || *it == '_') && m_scan.getInnerType(it, end, TYPE_REGEX::EMPHASIS)) {
+            auto len = m_scan.getMatchedLength();
+            auto matchEnd = it + len;
+            res += transEmphasis(it, matchEnd);
+            it += len;
+            continue;
+        }
         // test code
-        // test entity
+        if (*it == '`' && m_scan.getInnerType(it, end, TYPE_REGEX::CODE_WORD)) {
+            auto len = m_scan.getMatchedLength();
+            auto matchEnd = it + len;
+            res += transCodeword(it, matchEnd);
+            it += len;
+            continue;
+        }
+        // test entity: <, >
+        if (*it == '<') {
+            res += "&lt;";
+            ++it;
+            continue;
+        } else if (*it == '>') {
+            res += "&gt;";
+            ++it;
+            continue;
+        }
+
         res.push_back(*it++);
     }
     m_text = res;
