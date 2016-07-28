@@ -66,12 +66,11 @@ std::string transCodeword(const std::string::const_iterator& begin, const std::s
 }
 
 RichText::RichText(Scanner& scan, std::string& out, std::string text) : Element(scan, out) {
-    // TODO: transfer
     // deal with: emphasis, link, image, code, char entity
     std::string res;
     auto end = text.cend();
     for (auto it = text.cbegin(); it != end;) {
-        // test link
+        // try link
         if (*it == '[' && m_scan.getInnerType(it, end, TYPE_REGEX::LINK)) {
             auto len = m_scan.getMatchedLength();
             auto matchEnd = it + len;
@@ -79,7 +78,7 @@ RichText::RichText(Scanner& scan, std::string& out, std::string text) : Element(
             it += len;
             continue;
         }
-        // test barelink
+        // try barelink
 //        if (*it == '<' && m_scan.getInnerType(it, end, TYPE_REGEX::BARE_LINK)) {
 //            auto len = m_scan.getMatchedLength();
 //            auto matchEnd = it + len;
@@ -87,7 +86,7 @@ RichText::RichText(Scanner& scan, std::string& out, std::string text) : Element(
 //            it += len;
 //            continue;
 //        }
-        // test image
+        // try image
         if (*it == '!' && m_scan.getInnerType(it, end, TYPE_REGEX::IMAGE)) {
             auto len = m_scan.getMatchedLength();
             auto matchEnd = it + len;
@@ -95,7 +94,7 @@ RichText::RichText(Scanner& scan, std::string& out, std::string text) : Element(
             it += len;
             continue;
         }
-        // test emphasis
+        // try emphasis
         if ((*it == '*' || *it == '_') && m_scan.getInnerType(it, end, TYPE_REGEX::EMPHASIS)) {
             auto len = m_scan.getMatchedLength();
             auto matchEnd = it + len;
@@ -103,7 +102,7 @@ RichText::RichText(Scanner& scan, std::string& out, std::string text) : Element(
             it += len;
             continue;
         }
-        // test code
+        // try code
         if (*it == '`' && m_scan.getInnerType(it, end, TYPE_REGEX::CODE_WORD)) {
             auto len = m_scan.getMatchedLength();
             auto matchEnd = it + len;
@@ -111,7 +110,7 @@ RichText::RichText(Scanner& scan, std::string& out, std::string text) : Element(
             it += len;
             continue;
         }
-        // test entity: <, >
+        // try entity: <, >
         if (*it == '<') {
             res += "&lt;";
             ++it;

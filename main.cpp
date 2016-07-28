@@ -12,7 +12,7 @@ void help() {
 
 int main(int argc, char** args) {
 
-    std::cout << "=====main=====" << std::endl;
+//    std::cout << "=====main=====" << std::endl;
 
     string filename;
     if (argc == 2) {
@@ -39,7 +39,7 @@ int main(int argc, char** args) {
 
     help();
 
-    std::cout << "=====end=====" << std::endl;
+//    std::cout << "=====end=====" << std::endl;
     return 0;
 }
 
