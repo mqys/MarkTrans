@@ -23,7 +23,7 @@ enum class TYPE {
     // can be inner type
     PLAIN_TEXT,
     LINK,
-    BARE_LINK,
+//    BARE_LINK,
     IMAGE,
     EMPHASIS,
     CODE_WORD
@@ -46,7 +46,7 @@ public:
     // inner type inside Rich TEXT
     static const std::regex TEXT;
     static const std::regex LINK;
-    static const std::regex BARE_LINK;
+//    static const std::regex BARE_LINK;
     static const std::regex IMAGE;
     static const std::regex EMPHASIS;
     static const std::regex CODE_WORD;

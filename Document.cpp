@@ -9,26 +9,63 @@ const std::string Document::HTML_TITLE = "</title></head>\n<body>";
 const std::string Document::HTML_END = "\n</body></html>";
 const std::string Document::HTML_AD = "<hr /><footer><p>Translated by MarkTrans (mqys)</p><p><a href=\"https://github.com/mqys\">mqys Github</a></p></footer>";
 
-Document::Document(std::string filename) : m_scan(filename), m_isTransed(false){
+Document::Document(std::string filename) : m_out(""), m_scan(filename), m_isTransed(false), m_isOutToString(false), m_isGood(false) {
+
+    m_isGood = m_scan.good();
     auto pos = filename.rfind('.');
     m_barename = filename.substr(0, pos);
-    std::string outname = m_barename + ".html";
-    m_out.open(outname);
 }
 
-void Document::writeToFile(std::string anothername) {
-    if (!anothername.empty())
-        m_out.open(anothername);
-    if (!m_isTransed)
-        trans();
 
-    m_out << HTML_START << m_barename << HTML_TITLE;
+bool Document::good() {
+    return m_isGood;
+}
+
+void Document::outToString() {
+    m_out += HTML_START + m_barename + HTML_TITLE;
+
     // write body here
     for (auto& t: m_list)
         t->write();
 
-    m_out << HTML_AD <<HTML_END;
+    m_out += HTML_AD + HTML_END;
 }
+
+
+void Document::writeToFile(std::string anothername) {
+
+    if (!m_isGood)
+        return;
+
+    std::ofstream outfile;
+
+    if (!anothername.empty())
+        outfile.open(anothername);
+    else {
+        std::string outname = m_barename + ".html";
+        outfile.open(outname);
+    }
+    if (!m_isTransed)
+        trans();
+    if (!m_isOutToString)
+        outToString();
+
+    outfile << m_out.c_str();
+}
+
+
+void Document::writeToStdout() {
+
+    if (!m_isGood)
+        return;
+    if (!m_isTransed)
+        trans();
+    if (!m_isOutToString)
+        outToString();
+
+    std::cout << m_out << std::endl;
+}
+
 
 void Document::trans() {
     while (!m_scan.isEnd()) {

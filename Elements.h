@@ -17,21 +17,21 @@
  * */
 class Element {
 public:
-    Element(Scanner& scan, std::ostream& out) : m_scan(scan), m_out(out) {}
+    Element(Scanner& scan, std::string& out) : m_scan(scan), m_out(out) {}
 
 //    virtual void trans() = 0;
     virtual void write() = 0;
     virtual TYPE getType();
 protected:
     Scanner& m_scan;
-    std::ostream& m_out;
+    std::string& m_out;
 };
 
 
 // rich text, can contain Links, Emphasis, Code, Image...
 class RichText : public Element {
 public:
-    RichText(Scanner& scan, std::ostream& out, std::string text = "");
+    RichText(Scanner& scan, std::string& out, std::string text = "");
     virtual void write() override;
     void setText(std::string str) {
         m_text = str;
@@ -44,7 +44,7 @@ private:
 // Outer elements
 class Header: public Element {
 public:
-    Header(Scanner& scan, std::ostream& out);
+    Header(Scanner& scan, std::string& out);
     virtual void write() override;
 
 private:
@@ -54,18 +54,18 @@ private:
 
 class Horizontal : public Element {
 public:
-    Horizontal(Scanner& scan, std::ostream& out) : Element(scan, out) {
+    Horizontal(Scanner& scan, std::string& out) : Element(scan, out) {
         m_scan.consume();
     }
 
     virtual void write() override {
-        m_out << "<hr />\n";
+        m_out += "<hr />\n";
     }
 };
 
 class Blockquote : public Element {
 public:
-    Blockquote(Scanner& scan, std::ostream& out);
+    Blockquote(Scanner& scan, std::string& out);
     virtual void write() override;
 
 private:
@@ -74,7 +74,7 @@ private:
 
 class Code : public Element {
 public:
-    Code(Scanner& scan, std::ostream& out);
+    Code(Scanner& scan, std::string& out);
     virtual void write() override;
 
 private:
@@ -83,7 +83,7 @@ private:
 
 class Table : public Element {
 public:
-    Table(Scanner& scan, std::ostream& out);
+    Table(Scanner& scan, std::string& out);
     virtual void write() override;
 
 private:
@@ -92,7 +92,7 @@ private:
 
 //class Outer_link : public Element {
 //public:
-//    Outer_link(Scanner& scan, std::ostream& out);
+//    Outer_link(Scanner& scan, std::string& out);
 //    virtual void write() override;
 //
 //private:
@@ -102,7 +102,7 @@ private:
 //
 //class Outer_barelink : public Element {
 //public:
-//    Outer_barelink(Scanner& scan, std::ostream& out);
+//    Outer_barelink(Scanner& scan, std::string& out);
 //    virtual void write() override;
 //
 //private:
@@ -111,7 +111,7 @@ private:
 //
 //class Outer_image : public Element {
 //public:
-//    Outer_image(Scanner& scan, std::ostream& out);
+//    Outer_image(Scanner& scan, std::string& out);
 //    virtual void write() override;
 //
 //private:
@@ -121,7 +121,7 @@ private:
 
 class Paragraph : public Element {
 public:
-    Paragraph(Scanner& scan, std::ostream& out);
+    Paragraph(Scanner& scan, std::string& out);
     virtual void write() override;
 
 private:
@@ -131,7 +131,7 @@ private:
 
 class Unordered_list : public Element {
 public:
-    Unordered_list(Scanner& scan, std::ostream& out, int indent = 0);
+    Unordered_list(Scanner& scan, std::string& out, int indent = 0);
     virtual void write() override;
     virtual TYPE getType() override;
 private:
@@ -141,7 +141,7 @@ private:
 
 class Ordered_list : public Element {
 public:
-    Ordered_list(Scanner& scan, std::ostream& out, int indent = 0);
+    Ordered_list(Scanner& scan, std::string& out, int indent = 0);
     virtual void write() override;
     virtual TYPE getType() override;
 private:

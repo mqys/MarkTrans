@@ -32,6 +32,10 @@ public:
         return m_matchRes.length();
     }
 
+    bool good() {
+        return m_in.good();
+    }
+
 private:
     std::ifstream m_in;
     std::string m_line;

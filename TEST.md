@@ -39,7 +39,7 @@ hafuehfu <kkkkkk> afehuh
 ---
 ----
 
-![这是图片名字](这是图片的地址)
+![这是图片名字](./1.jpg)
 - ![这是图片2的name](这是图片2的地址)
 
 > This is quote
