@@ -1,21 +1,21 @@
 # MarkTrans
 A markdown parser for translating markdown files to html files.
 
-## Intro:
+## Intro
 - Using recursive descent and regex to implement LL(k)
 - Written in C++ 
 
-## Request:
+## Request
 - cmake
 - C++11 compiler
 
-## Build:
+## Build
 ```shell
 mkdir build
 cd build
 cmake .. && make
 ```
-## Usage:
+## Usage
 ```
 ./MarkTrans [-f] markdownfile
 #   -f: write output to file
@@ -41,7 +41,7 @@ cmake .. && make
 
 
 
-## Demo:
+## Demo
 see TEST.md and TEST.html in the demo folder
 
 ### Input raw markdown file
