@@ -1,5 +1,6 @@
 #include <iostream>
 #include <regex>
+#include <string.h>
 #include <sstream>
 #include "Scanner.h"
 #include "Document.h"
